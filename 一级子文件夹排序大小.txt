@@ -1,0 +1,93 @@
+function filesize ()
+
+{
+
+ 
+
+[string]$filepath =".\"
+
+$sortedlength = @{ }
+
+$sorted = @{ }
+
+if ($filepath -eq $null)
+
+{
+
+throw "路径不能为空"
+
+}
+
+ 
+
+dir -Path $filepath |
+
+ForEach-Object -Process {
+
+if ($_.psiscontainer -eq $true)
+
+{
+
+$length = 0
+
+$name=$_.name
+
+dir -Path $_.fullname -Recurse | ForEach-Object{
+
+[long]$length += $_.Length
+
+}
+
+$sortedlength.Add($name,$length)
+
+}
+
+}
+
+ 
+
+$sorted=$sortedlength.GetEnumerator() | Sort-Object value -Descending
+
+foreach ($a in $sorted.GetEnumerator())
+
+{
+
+ 
+
+if ($a.Value -ge 1GB)
+
+{
+
+$l = $a.Value/1GB
+
+$a.Key + "文件夹的大小为： {0:n1} GB" -f $l
+
+}
+
+ 
+
+elseif ($a.Value -ge 1MB)
+
+{
+
+$l = $a.Value/1MB
+
+$a.Key + "文件夹的大小为： {0:n1} MB" -f $l
+
+}
+
+else
+
+{
+
+$l = $a.Value/1KB
+
+$a.Key + "文件夹的大小为： {0:n1} KB" -f $l
+
+}
+
+}
+
+}
+
+filesize | out-file .\文件大小.txt
